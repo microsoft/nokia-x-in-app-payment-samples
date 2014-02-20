@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014 Nokia Corporation and/or its subsidiary(-ies).
+    See the license text file delivered with this project for more information.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Simple demo to demonstrate how to use Google IAB and Nokia IAP in same APK"
+        android:id="@+id/textView" android:layout_gravity="center_horizontal" android:paddingLeft="32dp"
+        android:paddingRight="32dp" android:layout_marginTop="32dp"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Buy"
+        android:id="@+id/buy" android:layout_gravity="center_horizontal" android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"/>
+</LinearLayout>
+

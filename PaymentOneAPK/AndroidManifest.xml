@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.nokia.example.paymentoneapk"
+      android:versionCode="1"
+      android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="16" />
+
+    <uses-permission android:name="com.android.vending.BILLING"/>
+    <uses-permission android:name="com.nokia.payment.BILLING"/>
+
+    <application android:label="@string/app_name"
+                 android:icon="@drawable/niap_samples_icon"
+
+                 android:allowBackup="false"
+        >
+        <activity android:name=".PaymentOneAPKActivity"
+                  android:label="@string/app_name"
+
+                  android:screenOrientation="portrait"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest> 
