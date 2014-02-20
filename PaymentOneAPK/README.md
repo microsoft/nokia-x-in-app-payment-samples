@@ -1,7 +1,9 @@
 Payment One APK
 ===============
 
-Simple demonstration application to show how to have Nokia IAP and Google IAB in same application
+Simple example application demonstrating how to utilise both Nokia In-App
+Payment and Google In-App Billing in the same application. The resulting APK
+will run in both Nokia X and Google Android devices.
 
 Building with Eclipse
 ---------------------
@@ -13,13 +15,13 @@ Building with Eclipse
 Building with Gradle wrapper
 ----------------------------
 
-###### Linux & OS X
+**Linux & OS X**
 
 ```
 $ ./gradlew installDebug
 ```
 
-###### Windows
+**Windows**
 
 ```
 C:\PaymentOneAPK> gradlew installDebug

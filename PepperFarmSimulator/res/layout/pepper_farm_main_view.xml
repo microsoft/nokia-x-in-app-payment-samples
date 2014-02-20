@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014 Nokia Corporation and/or its subsidiary(-ies).
+    See the license text file delivered with this project for more information.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+
+    <Button
+        android:id="@+id/buy_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="14dp"
+        android:text="@string/buy_peppers" />
+
+    <TextView
+        android:id="@+id/your_peppers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/buy_button"
+        android:layout_alignBottom="@+id/buy_button"
+        android:layout_alignParentLeft="true"
+        android:text="@string/owned_peppers"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <fragment
+        android:id="@+id/product_list"
+        android:name="com.nokia.example.pepperfarm.client.MainScreenPepperListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/fetch_restorable_products"
+        android:layout_below="@+id/buy_button"
+        class="com.nokia.example.pepperfarm.client.MainScreenPepperListFragment"
+        tools:layout="@layout/pepper_list_row_view" />
+
+    <Button
+        android:id="@+id/reset_purchases"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/reset_purchase" />
+
+    <Button
+        android:id="@+id/fetch_restorable_products"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/reset_purchases"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/fetch_all_restorables" />
+
+</RelativeLayout>

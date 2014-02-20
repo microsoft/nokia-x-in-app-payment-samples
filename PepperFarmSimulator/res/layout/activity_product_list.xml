@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014 Nokia Corporation and/or its subsidiary(-ies).
+    See the license text file delivered with this project for more information.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+<fragment
+    android:id="@+id/product_list"
+    android:name="com.nokia.example.pepperfarm.client.ProductListFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/get_new_peppers_link"
+    tools:context=".ProductListActivity"
+    tools:layout="@android:layout/list_content" />
+
+<TextView
+    android:id="@+id/get_new_peppers_link"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:text="@string/new_peppers"
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>
+

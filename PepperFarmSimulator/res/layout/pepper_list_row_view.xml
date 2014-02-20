@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014 Nokia Corporation and/or its subsidiary(-ies).
+    See the license text file delivered with this project for more information.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <TextView
+        android:id="@+id/pepper_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pepperName"
+        android:layout_below="@+id/pepperName"
+        android:layout_toLeftOf="@+id/eat_pepper"
+        android:lines="2"
+        android:text="@string/pepper_description"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/eat_pepper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:paddingTop="10dp"
+        android:text="@string/consume_pepper" />
+
+    <ImageView
+        android:id="@+id/list_image"
+        android:layout_width="120dip"
+        android:layout_height="120dip"
+        android:layout_alignRight="@+id/pepperName"
+        android:layout_below="@+id/pepper_description"
+        android:contentDescription="@string/pepper_name"
+        android:src="@drawable/farm"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/itemcount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/pepperName"
+        android:layout_alignBottom="@+id/pepperName"
+        android:layout_toRightOf="@+id/pepperName" />
+
+    <TextView
+        android:id="@+id/pepperName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/eat_pepper"
+        android:layout_alignBottom="@+id/eat_pepper"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/eat_pepper"
+        android:text="@string/pepper_name"
+        android:textSize="20sp" />
+    
+</RelativeLayout>

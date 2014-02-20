@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014 Nokia Corporation and/or its subsidiary(-ies).
+    See the license text file delivered with this project for more information.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.nokia.example.pepperfarm.client"
+    android:versionCode="1"
+    android:versionName="Prod" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="16" />
+    <uses-permission android:name="com.nokia.payment.BILLING"/>
+
+    <application
+        android:name="Pepperfarm"
+        android:allowBackup="true"
+        android:icon="@drawable/launchicon"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity android:name="PepperFarmSplashScreen" 
+            android:label="@string/app_name" 
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="ProductListActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.PRODUCT_LIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="PepperFarmMainScreenActivity"></activity>
+                
+    </application>
+
+</manifest>

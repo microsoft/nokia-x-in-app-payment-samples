@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014 Nokia Corporation and/or its subsidiary(-ies).
+    See the license text file delivered with this project for more information.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+    <!-- ListRow Left side Thumbnail image -->
+    <LinearLayout
+        android:id="@+id/thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip"
+        android:padding="3dip" >
+
+        <ImageView
+            android:id="@+id/list_image"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/farm"
+            android:visibility="gone" />
+
+    </LinearLayout>
+    <!-- Rightend Arrow -->
+
+    <!-- IAP Name -->
+
+     <Button
+         android:id="@+id/start_purchase"
+         style="?android:attr/buttonStyleSmall"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:layout_alignParentTop="true"
+         android:text="Buy" />
+
+     <TextView
+         android:id="@+id/iapName"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentTop="true"
+         android:layout_toLeftOf="@+id/start_purchase"
+         android:layout_toRightOf="@+id/thumbnail"
+         android:text="@string/appname"
+         android:textSize="20sp" />
+
+     <TextView
+         android:id="@+id/product_description"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignLeft="@+id/iapName"
+         android:layout_below="@+id/iapName"
+         android:layout_toLeftOf="@+id/start_purchase"
+         android:text="@string/product_description"
+         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+     <TextView
+         android:id="@+id/price"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_above="@+id/product_description"
+         android:layout_toLeftOf="@+id/start_purchase"
+         android:text="@string/price"
+         android:textSize="15sp" />
+    
+</RelativeLayout>

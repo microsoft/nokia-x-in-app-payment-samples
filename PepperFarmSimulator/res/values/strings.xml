@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014 Nokia Corporation and/or its subsidiary(-ies).
+    See the license text file delivered with this project for more information.
+-->
+<resources>
+    <string name="app_name">Pepper Farm Simulator</string>
+    <string name="title_product_detail">Product Detail</string>
+    <string name="action_settings">Settings</string>
+    <string name="appname">appName</string>
+    <string name="price">price</string>
+    <string name="your_peppers">Your Items</string>
+    <string name="buy_peppers">Buy Peppers!</string>
+    <string name="pepper_name">Pepper Name</string>
+    <string name="pepper_description">Pepper Description</string>
+    <string name="eat_pepper">Consume Pepper</string>
+    <string name="splash_screen_description">Pepper Farm Simulator Splash Screen</string>
+    <string name="product_description">Product description</string>
+    <string name="no_peppers">No peppers</string>
+    <string name="reset_purchase">Reset purchases</string>
+    <string name="owned_peppers">Your peppers</string>
+    <string name="new_peppers">New peppers</string>
+    <string name="consume_pepper">Consume</string>
+    <string name="get_new_peppers_string">Get New Peppers</string>
+    <string name="get_new_peppers_underline"><u>Get New Peppers</u></string>
+    <string name="pepper_farm">Pepper Farm</string>
+    <string name="pepper_seeds">Pepper Seeds</string>
+    <string name="jalapeno">Jalapeno</string>
+    <string name="sweet_bell">Sweet Bell</string>
+    <string name="habenero">Habenero</string>
+    <string name="pepper_spray">Pepper Spray</string>
+    <string name="pepper_farm_description">Your Pepper Farm. Use it to grow new peppers.</string>
+    <string name="pepper_seeds_description">A good start to a farm.</string>
+    <string name="jalapeno_description">Looking for something a little more spicy? Try the Jalapeno.</string>
+    <string name="sweet_bell_description">Jumpstart your farm with a Sweet Bell</string>
+    <string name="habenero_description">A good middle ground.</string>
+    <string name="pepper_spray_description">Keep the bears away.</string>
+    <string name="get_restorables">Fetching owned peppers</string>
+    <string name="fetch_all_restorables">Fetch restorable products</string>
+</resources>
