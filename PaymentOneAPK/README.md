@@ -13,13 +13,13 @@ Building with Eclipse
 Building with Gradle wrapper
 ----------------------------
 
-###### Linux & OS X
+**Linux & OS X**
 
 ```
 $ ./gradlew installDebug
 ```
 
-###### Windows
+**Windows**
 
 ```
 C:\PaymentOneAPK> gradlew installDebug
