@@ -77,19 +77,29 @@ public class PaymentOneAPKService {
 
 	public void setService(final Context context, final IBinder service) {
 
-		if (PaymentOneAPKService.isNokiaNIAPAvailable(context)) {
+		if (PaymentOneAPKUtils.isNokiaNIAPAvailable(context)) {
 			useNokiaIAP(INokiaIAPService.Stub.asInterface(service));
-
 		} else {
 			useGoogleIAB(IInAppBillingService.Stub.asInterface(service));
-
 		}
+	}
 
+	public void clearService() {
+		nokiaIAPService = null;
+		googleIABService = null;
 	}
 
 	public Intent getServiceIntent(final Context context) {
 		return PaymentOneAPKUtils.isNokiaNIAPAvailable(context)
 			   ? new Intent("com.nokia.payment.iapenabler.InAppBillingService.BIND")
 			   : new Intent("com.android.vending.billing.InAppBillingService.BIND");
+	}
+
+	@Override
+	public String toString() {
+		return String.format("PaymentOneAPKService{googleIABService=%s, nokiaIAPService=%s, useGoogleBilling=%s}",
+			googleIABService,
+			nokiaIAPService,
+			useGoogleBilling);
 	}
 }
