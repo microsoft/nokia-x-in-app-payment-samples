@@ -29,7 +29,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 	private final ArrayList<String> productSkus = new ArrayList<String>(10);
 
-	private       Button            buyButton   = null;
+	private Button buyButton = null;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -165,38 +165,28 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	private void checkIfBillingIsSupported() {
 		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.checkIfBillingIsSupported");
 
+		final int result;
+		try {
+			result = mService.isBillingSupported(3, getPackageName(), "inapp");
 
+		} catch (final RemoteException e) {
+			Log.e(TAG, "error while isBillingSupported", e);
+			toastMessage("Got an exception while consuming");
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+			return;
+		}
 
-				try {
-					final int result = mService.isBillingSupported(3, getPackageName(), "inapp");
+		if (result != 0) {
+			toastMessage("Billing is not supported.");
 
-					if (result != 0) {
-						toastMessage("Billing is not supported.");
+			Log.d(TAG, String.format("result = %d", result));
 
-						Log.d(TAG, String.format("result = %d", result));
+			return;
+		}
 
-						return;
-					}
+		queryProductDetails();
 
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							buyButton.setEnabled(true);
-						}
-					});
-					
-					queryProductDetails();
-
-				} catch (final RemoteException e) {
-					Log.e(TAG, "error while isBillingSupported", e);
-					toastMessage("Got an exception while consuming");
-				}
-			}
-		}).start();
+		buyButton.setEnabled(true);
 	}
 
 	private void queryProductDetails() {
