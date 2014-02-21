@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import static com.nokia.example.paymentoneapk.PaymentOneAPKUtils.getErrorMessage;
+
 @SuppressWarnings("MethodOnlyUsedFromInnerClass")
 public class PaymentOneAPKActivity extends Activity implements ServiceConnection {
 
@@ -115,9 +117,11 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 			final int response = buyIntentBundle.getInt("RESPONSE_CODE");
 
-			if (response != 0) {
-				Log.e(TAG, String.format("error while buying. response=%d", response));
-				toastMessage(String.format("Got an error while buying: %d", response));
+			if (response != PaymentOneAPKUtils.RESULT_OK) {
+
+				Log.e(TAG, String.format("error while buying. response=%s", getErrorMessage(response)));
+				toastMessage(String.format("Got an error while buying: %s", getErrorMessage(response)));
+
 				return;
 			}
 
@@ -176,10 +180,10 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 			return;
 		}
 
-		if (result != 0) {
-			toastMessage("Billing is not supported.");
+		if (result != PaymentOneAPKUtils.RESULT_OK) {
+			toastMessage(String.format("Billing is not supported: %s", getErrorMessage(result)));
 
-			Log.d(TAG, String.format("result = %d", result));
+			Log.e(TAG, String.format("result = %d : %s", result, getErrorMessage(result)));
 
 			return;
 		}
@@ -214,8 +218,12 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 				final int response = skuDetails.getInt("RESPONSE_CODE");
 				Log.d(TAG, String.format("response = %d", response));
 
-				if (response != 0) {
-					toastMessage(String.format("Got invalid response while doing query: %d", response));
+				if (response != PaymentOneAPKUtils.RESULT_OK) {
+
+					toastMessage(
+						String.format("Got invalid response while doing query: %s", getErrorMessage(response))
+					);
+
 					return;
 				}
 
