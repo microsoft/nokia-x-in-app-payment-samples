@@ -158,8 +158,14 @@ public class PaymentOneAPKActivity extends Activity {
 
 						return;
 					}
-					buyButton.setEnabled(true);
 
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							buyButton.setEnabled(true);
+						}
+					});
+					
 					queryProductDetails();
 
 				} catch (RemoteException e) {
