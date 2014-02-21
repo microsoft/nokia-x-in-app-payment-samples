@@ -15,19 +15,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import com.android.vending.billing.IInAppBillingService;
-import com.nokia.payment.iap.aidl.INokiaIAPService;
 
 import java.util.ArrayList;
 
-public class PaymentOneAPKActivity extends Activity {
+import static com.nokia.example.paymentoneapk.PaymentOneAPKUtils.getErrorMessage;
+
+@SuppressWarnings("MethodOnlyUsedFromInnerClass")
+public class PaymentOneAPKActivity extends Activity implements ServiceConnection {
 
 	private static final String TAG = PaymentOneAPKActivity.class.getCanonicalName();
+
+	public static final int TOAST_DURATION = 1500;
 
 	private final PaymentOneAPKService mService = new PaymentOneAPKService();
 
 	private final ArrayList<String> productSkus = new ArrayList<String>(10);
-	private Button buyButton;
+
+	private Button buyButton = null;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -48,7 +52,7 @@ public class PaymentOneAPKActivity extends Activity {
 
 		final Intent intent = mService.getServiceIntent(this);
 
-		bindService(intent, serviceConn, Context.BIND_AUTO_CREATE);
+		bindService(intent, this, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
@@ -57,10 +61,10 @@ public class PaymentOneAPKActivity extends Activity {
 
 		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.onActivityResult");
 
-		Log.d(TAG, "requestCode = " + requestCode);
-		Log.d(TAG, "resultCode = " + resultCode);
+		Log.d(TAG, String.format("requestCode = %d", requestCode));
+		Log.d(TAG, String.format("resultCode = %d", resultCode));
 
-		Toast.makeText(this, "Item purchased", 1500).show();
+		toastMessage("Item purchased");
 
 		consumeTestProduct();
 	}
@@ -68,19 +72,37 @@ public class PaymentOneAPKActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+
+		unbindService(this);
+	}
+
+	@Override
+	public void onServiceConnected(final ComponentName name, final IBinder service) {
+		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneAPKActivity.onServiceConnected");
+
+		mService.setService(this, service);
+
+		mapProductsSkus();
+
+		checkIfBillingIsSupported();
+	}
+
+	@Override
+	public void onServiceDisconnected(final ComponentName name) {
+		mService.clearService();
 	}
 
 	private void mapProductsSkus() {
 
 		productSkus.add("android.test.purchased");
 
-		Bundle productMappings = new Bundle();
+		final Bundle productMappings = new Bundle();
 		productMappings.putString("1023608", "android.test.purchased");
 
 		try {
 			mService.mapProducts(3, getPackageName(), productMappings);
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		} catch (final RemoteException e) {
+			Log.e(TAG, "error while mapping product skus", e);
 		}
 
 	}
@@ -95,25 +117,27 @@ public class PaymentOneAPKActivity extends Activity {
 
 			final int response = buyIntentBundle.getInt("RESPONSE_CODE");
 
-			if (response != 0) {
-				Log.e(TAG, "error while buying. response=" + response);
-				toastMessage("Got an error while buying: " + response);
+			if (response != PaymentOneAPKUtils.RESULT_OK) {
+
+				Log.e(TAG, String.format("error while buying. response=%s", getErrorMessage(response)));
+				toastMessage(String.format("Got an error while buying: %s", getErrorMessage(response)));
+
 				return;
 			}
 
 			final PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
 
-			Log.d(TAG, "pendingIntent = " + pendingIntent);
+			Log.d(TAG, String.format("pendingIntent = %s", pendingIntent));
 
 			startIntentSenderForResult(
 				pendingIntent.getIntentSender(), requestCode, new Intent(), 0, 0, 0
 			);
 
 		} catch (final RemoteException e) {
-			e.printStackTrace();
+			Log.e(TAG, "error while buying", e);
 			toastMessage("Got an exception while guying");
 		} catch (final IntentSender.SendIntentException e) {
-			e.printStackTrace();
+			Log.e(TAG, "error while buying", e);
 			toastMessage("Got an exception while guying");
 		}
 	}
@@ -126,10 +150,10 @@ public class PaymentOneAPKActivity extends Activity {
 			public void run() {
 				try {
 					mService.consumePurchase(
-						3, getPackageName(), "inapp:" + getPackageName() + ":android.test.purchased"
+						3, getPackageName(), String.format("inapp:%s:android.test.purchased", getPackageName())
 					);
 
-				} catch (RemoteException e) {
+				} catch (final RemoteException e) {
 					Log.e(TAG, "error while consuming", e);
 					toastMessage("Got an exception while consuming");
 					return;
@@ -141,33 +165,32 @@ public class PaymentOneAPKActivity extends Activity {
 		}).start();
 	}
 
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void checkIfBillingIsSupported() {
 		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.checkIfBillingIsSupported");
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+		final int result;
+		try {
+			result = mService.isBillingSupported(3, getPackageName(), "inapp");
 
-				try {
-					int result = mService.isBillingSupported(3, getPackageName(), "inapp");
+		} catch (final RemoteException e) {
+			Log.e(TAG, "error while isBillingSupported", e);
+			toastMessage("Got an exception while consuming");
 
-					if (result != 0) {
-						toastMessage("Billing is not supported.");
+			return;
+		}
 
-						Log.d(TAG, "result = " + result);
+		if (result != PaymentOneAPKUtils.RESULT_OK) {
+			toastMessage(String.format("Billing is not supported: %s", getErrorMessage(result)));
 
-						return;
-					}
-					buyButton.setEnabled(true);
+			Log.e(TAG, String.format("result = %d : %s", result, getErrorMessage(result)));
 
-					queryProductDetails();
+			return;
+		}
 
-				} catch (RemoteException e) {
-					Log.e(TAG, "error while isBillingSupported", e);
-					toastMessage("Got an exception while consuming");
-				}
-			}
-		}).start();
+		queryProductDetails();
+
+		buyButton.setEnabled(true);
 	}
 
 	private void queryProductDetails() {
@@ -178,6 +201,7 @@ public class PaymentOneAPKActivity extends Activity {
 		querySkus.putStringArrayList("ITEM_ID_LIST", productSkus);
 
 		new Thread(new Runnable() {
+			@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 			@Override
 			public void run() {
 
@@ -192,17 +216,21 @@ public class PaymentOneAPKActivity extends Activity {
 				}
 
 				final int response = skuDetails.getInt("RESPONSE_CODE");
-				Log.d(TAG, "response = " + response);
+				Log.d(TAG, String.format("response = %d", response));
 
-				if (response != 0) {
-					toastMessage("Got invalid response while doing query: " + response);
+				if (response != PaymentOneAPKUtils.RESULT_OK) {
+
+					toastMessage(
+						String.format("Got invalid response while doing query: %s", getErrorMessage(response))
+					);
+
 					return;
 				}
 
 				final ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
 
 				for (final String resp : responseList) {
-					Log.d(TAG, "resp = " + resp);
+					Log.d(TAG, String.format("resp = %s", resp));
 				}
 
 				toastMessage("Item query done");
@@ -216,27 +244,17 @@ public class PaymentOneAPKActivity extends Activity {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(PaymentOneAPKActivity.this, message, 1500).show();
+				Toast.makeText(PaymentOneAPKActivity.this, message, TOAST_DURATION).show();
 			}
 		});
 
 	}
 
-	final ServiceConnection serviceConn = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(final ComponentName name, final IBinder service) {
-
-			Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.onServiceConnected");
-
-			mService.setService(PaymentOneAPKActivity.this, service);
-
-			mapProductsSkus();
-
-			checkIfBillingIsSupported();
-		}
-
-		@Override
-		public void onServiceDisconnected(final ComponentName name) {
-		}
-	};
+	@Override
+	public String toString() {
+		return String.format("PaymentOneAPKActivity{mService=%s, productSkus=%s, buyButton=%s}",
+			mService,
+			productSkus,
+			buyButton);
+	}
 }

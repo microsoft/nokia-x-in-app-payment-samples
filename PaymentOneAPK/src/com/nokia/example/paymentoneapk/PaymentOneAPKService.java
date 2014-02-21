@@ -7,59 +7,19 @@ package com.nokia.example.paymentoneapk;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 import com.android.vending.billing.IInAppBillingService;
 import com.nokia.payment.iap.aidl.INokiaIAPService;
 
-import java.util.List;
-
-@SuppressWarnings("StaticNonFinalField")
+@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 public class PaymentOneAPKService {
-
-	public static final  String NOKIA_NIAP = "com.nokia.payment.iapenabler";
-	private static final String TAG        = PaymentOneAPKService.class.getCanonicalName();
 
 	private IInAppBillingService googleIABService = null;
 	private INokiaIAPService     nokiaIAPService  = null;
 
-	private static boolean isNokiaIAPValueCached = false;
-	private static boolean isNokiaIAPInstalled   = false;
-
 	private boolean useGoogleBilling = false;
-
-	public static boolean isNokiaNIAPAvailable(final Context context) {
-
-		if (isNokiaIAPValueCached) {
-			return isNokiaIAPInstalled;
-		}
-
-		final PackageManager packageManager = context.getPackageManager();
-		final List<PackageInfo> allPackages = packageManager.getInstalledPackages(0);
-
-		isNokiaIAPValueCached = true;
-
-		for (final PackageInfo packageInfo : allPackages) {
-
-			if (NOKIA_NIAP.equals(packageInfo.packageName)) {
-
-				Log.d(TAG, "Nokia IAP found");
-
-				isNokiaIAPInstalled = true;
-
-				return true;
-
-			}
-		}
-
-		isNokiaIAPInstalled = false;
-
-		return false;
-	}
 
 	public int isBillingSupported(final int apiVersion, final String packageName, final String type)
 		throws RemoteException {
@@ -117,19 +77,29 @@ public class PaymentOneAPKService {
 
 	public void setService(final Context context, final IBinder service) {
 
-		if (PaymentOneAPKService.isNokiaNIAPAvailable(context)) {
+		if (PaymentOneAPKUtils.isNokiaNIAPAvailable(context)) {
 			useNokiaIAP(INokiaIAPService.Stub.asInterface(service));
-
 		} else {
 			useGoogleIAB(IInAppBillingService.Stub.asInterface(service));
-
 		}
+	}
 
+	public void clearService() {
+		nokiaIAPService = null;
+		googleIABService = null;
 	}
 
 	public Intent getServiceIntent(final Context context) {
-		return PaymentOneAPKService.isNokiaNIAPAvailable(context)
+		return PaymentOneAPKUtils.isNokiaNIAPAvailable(context)
 			   ? new Intent("com.nokia.payment.iapenabler.InAppBillingService.BIND")
 			   : new Intent("com.android.vending.billing.InAppBillingService.BIND");
+	}
+
+	@Override
+	public String toString() {
+		return String.format("PaymentOneAPKService{googleIABService=%s, nokiaIAPService=%s, useGoogleBilling=%s}",
+			googleIABService,
+			nokiaIAPService,
+			useGoogleBilling);
 	}
 }
