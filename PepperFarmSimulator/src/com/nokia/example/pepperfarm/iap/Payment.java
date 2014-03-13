@@ -35,6 +35,7 @@ import java.util.Arrays;
 
 public class Payment implements ServiceConnection {
 
+    public static final int API_VERSION = 3;
     public Activity activity;
     public INokiaIAPService npay;
     public boolean npayAvailable = false;
@@ -172,7 +173,7 @@ public class Payment implements ServiceConnection {
             int responseCode = RESULT_ERR;
 
             if (npayAvailable)
-                responseCode = npay.isBillingSupported(1, activity.getPackageName(), ITEM_TYPE_INAPP);
+                responseCode = npay.isBillingSupported(API_VERSION, activity.getPackageName(), ITEM_TYPE_INAPP);
 
             switch (responseCode) {
                 case RESULT_OK:
@@ -222,7 +223,7 @@ public class Payment implements ServiceConnection {
                 productBundle.putStringArrayList("ITEM_ID_LIST", productIdArray);
 
                 try {
-                    Bundle priceInfo = npay.getProductDetails(1, activity.getPackageName(), ITEM_TYPE_INAPP, productBundle);
+                    Bundle priceInfo = npay.getProductDetails(API_VERSION, activity.getPackageName(), ITEM_TYPE_INAPP, productBundle);
 
                     if (priceInfo.getInt("RESPONSE_CODE", RESULT_ERR) == RESULT_OK) {
                         ArrayList<String> productDetailsList = priceInfo.getStringArrayList("DETAILS_LIST");
@@ -304,7 +305,7 @@ public class Payment implements ServiceConnection {
                 productBundle.putStringArrayList("ITEM_ID_LIST", productIdArray);
 
                 try {
-                    Bundle purchases = npay.getPurchases(1, activity.getPackageName(), ITEM_TYPE_INAPP, productBundle, null);
+                    Bundle purchases = npay.getPurchases(API_VERSION, activity.getPackageName(), ITEM_TYPE_INAPP, productBundle, null);
                     Log.i("getPurchases", "GET PURCHASES RESPONSE CODE: " + purchases.getInt("RESPONSE_CODE", RESULT_ERR));
 
                     if (purchases.getInt("RESPONSE_CODE", RESULT_ERR) == RESULT_OK) {
@@ -373,7 +374,7 @@ public class Payment implements ServiceConnection {
         if (!isBillingAvailable())
             return;
 
-        Bundle intentBundle = npay.getBuyIntent(1, activity.getPackageName(), product_id, ITEM_TYPE_INAPP, "");
+        Bundle intentBundle = npay.getBuyIntent(API_VERSION, activity.getPackageName(), product_id, ITEM_TYPE_INAPP, "");
         PendingIntent purchaseIntent = intentBundle.getParcelable("BUY_INTENT");
 
         //Set purchase in progress
@@ -398,7 +399,7 @@ public class Payment implements ServiceConnection {
 
         try {
             Log.i("consumeProduct", "Consuming product: " + productId + " PurchaseToken: " + token);
-            int response = npay.consumePurchase(1, activity.getPackageName(), productId, token);
+            int response = npay.consumePurchase(API_VERSION, activity.getPackageName(), productId, token);
 
             if (response == RESULT_OK)
                 consumed = true;
