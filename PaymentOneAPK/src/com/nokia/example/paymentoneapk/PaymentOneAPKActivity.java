@@ -65,7 +65,11 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 		Log.d(TAG, String.format("requestCode = %d", requestCode));
 		Log.d(TAG, String.format("resultCode = %d", resultCode));
 
-		toastMessage("Item purchased");
+		if (resultCode == RESULT_OK) {
+			toastMessage("Item purchased");
+		} else {
+			toastMessage("Error while purchasing product");
+		}
 
 		consumeTestProduct();
 	}
