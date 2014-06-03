@@ -63,6 +63,19 @@ public class PaymentOneAPKService {
 
 	}
 
+	public Bundle getPurchases(final int apiVersion, final String packageName, final String type, final String continuationToken)
+		throws RemoteException {
+
+		return useGoogleBilling
+			   ? googleIABService.getPurchases(apiVersion, packageName, type, continuationToken)
+			   : nokiaIAPService.getPurchases(apiVersion, packageName, type, null, continuationToken);
+
+	}
+
+	public boolean isSigningSupported() {
+		return useGoogleBilling; // Google supports signed packages, Nokia not
+	}
+
 	public void useGoogleIAB(final IInAppBillingService service) {
 		useGoogleBilling = true;
 

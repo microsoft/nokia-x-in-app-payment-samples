@@ -26,6 +26,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	private static final String TAG = PaymentOneAPKActivity.class.getCanonicalName();
 
 	public static final int TOAST_DURATION = 1500;
+	public static final int API_VERSION = 3;
 
 	private final PaymentOneAPKService mService = new PaymentOneAPKService();
 
@@ -35,7 +36,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
-		Log.d(TAG, "com.nokia.IABinAll.MyActivity.onCreate");
+		Log.d(TAG, "PaymentOneAPKActivity.onCreate");
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
@@ -59,12 +60,16 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.onActivityResult");
+		Log.d(TAG, "PaymentOneAPKActivity.onActivityResult");
 
 		Log.d(TAG, String.format("requestCode = %d", requestCode));
 		Log.d(TAG, String.format("resultCode = %d", resultCode));
 
-		toastMessage("Item purchased");
+		if (resultCode == RESULT_OK) {
+			toastMessage("Item purchased");
+		} else {
+			toastMessage("Error while purchasing product");
+		}
 
 		consumeTestProduct();
 	}
@@ -78,7 +83,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 	@Override
 	public void onServiceConnected(final ComponentName name, final IBinder service) {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneAPKActivity.onServiceConnected");
+		Log.d(TAG, "PaymentOneAPKActivity.onServiceConnected");
 
 		mService.setService(this, service);
 
@@ -100,7 +105,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 		productMappings.putString("1023608", "android.test.purchased");
 
 		try {
-			mService.mapProducts(3, getPackageName(), productMappings);
+			mService.mapProducts(API_VERSION, getPackageName(), productMappings);
 		} catch (final RemoteException e) {
 			Log.e(TAG, "error while mapping product skus", e);
 		}
@@ -110,10 +115,10 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	public void launchPurchase(final String sku, final String itemType, final int requestCode,
 		final String extraData) {
 
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.launchPurchase");
+		Log.d(TAG, "PaymentOneAPKActivity.launchPurchase");
 
 		try {
-			final Bundle buyIntentBundle = mService.getBuyIntent(3, getPackageName(), sku, itemType, extraData);
+			final Bundle buyIntentBundle = mService.getBuyIntent(API_VERSION, getPackageName(), sku, itemType, extraData);
 
 			final int response = buyIntentBundle.getInt("RESPONSE_CODE");
 
@@ -135,22 +140,22 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 		} catch (final RemoteException e) {
 			Log.e(TAG, "error while buying", e);
-			toastMessage("Got an exception while guying");
+			toastMessage("Got an exception while buying");
 		} catch (final IntentSender.SendIntentException e) {
 			Log.e(TAG, "error while buying", e);
-			toastMessage("Got an exception while guying");
+			toastMessage("Got an exception while buying");
 		}
 	}
 
 	public void consumeTestProduct() {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.consumeProduct");
+		Log.d(TAG, "PaymentOneAPKActivity.consumeTestProduct");
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					mService.consumePurchase(
-						3, getPackageName(), String.format("inapp:%s:android.test.purchased", getPackageName())
+						API_VERSION, getPackageName(), String.format("inapp:%s:android.test.purchased", getPackageName())
 					);
 
 				} catch (final RemoteException e) {
@@ -167,11 +172,11 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void checkIfBillingIsSupported() {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.checkIfBillingIsSupported");
+		Log.d(TAG, "PaymentOneAPKActivity.checkIfBillingIsSupported");
 
 		final int result;
 		try {
-			result = mService.isBillingSupported(3, getPackageName(), "inapp");
+			result = mService.isBillingSupported(API_VERSION, getPackageName(), "inapp");
 
 		} catch (final RemoteException e) {
 			Log.e(TAG, "error while isBillingSupported", e);
@@ -188,13 +193,52 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 			return;
 		}
 
+		getPurchases();
+
 		queryProductDetails();
 
 		buyButton.setEnabled(true);
 	}
 
+	private void getPurchases() {
+		Log.d(TAG, "PaymentOneAPKActivity.getPurchases");
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Bundle ownedItems = null;
+
+				try {
+					ownedItems = mService.getPurchases(API_VERSION, getPackageName(), "inapp", null);
+				} catch (final RemoteException e) {
+					Log.e(TAG, "got an exception", e);
+
+					return;
+				}
+
+				final int response = ownedItems.getInt("RESPONSE_CODE");
+
+				Log.d(TAG, "getPurchases response code = " + response);
+
+				if (response != PaymentOneAPKUtils.RESULT_OK) {
+
+					Log.e(TAG, String.format("response code = %d : %s", response, getErrorMessage(response)));
+
+					return;
+				}
+
+				final ArrayList<String> ownedSkus =
+				      ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+
+				for (final String ownedSku : ownedSkus) {
+					Log.d(TAG, "ownedSku = " + ownedSku);
+				}
+			}
+		}).start();
+	}
+
 	private void queryProductDetails() {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.queryProductDetails");
+		Log.d(TAG, "PaymentOneAPKActivity.queryProductDetails");
 
 		final Bundle querySkus = new Bundle();
 
@@ -208,7 +252,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 				final Bundle skuDetails;
 				try {
 
-					skuDetails = mService.getSkuDetails(3, getPackageName(), "inapp", querySkus);
+					skuDetails = mService.getSkuDetails(API_VERSION, getPackageName(), "inapp", querySkus);
 
 				} catch (final RemoteException e) {
 					Log.e(TAG, "query error", e);
