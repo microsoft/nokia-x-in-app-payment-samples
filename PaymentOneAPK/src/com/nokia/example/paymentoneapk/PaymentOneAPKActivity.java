@@ -26,6 +26,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	private static final String TAG = PaymentOneAPKActivity.class.getCanonicalName();
 
 	public static final int TOAST_DURATION = 1500;
+	public static final int API_VERSION = 3;
 
 	private final PaymentOneAPKService mService = new PaymentOneAPKService();
 
@@ -100,7 +101,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 		productMappings.putString("1023608", "android.test.purchased");
 
 		try {
-			mService.mapProducts(3, getPackageName(), productMappings);
+			mService.mapProducts(API_VERSION, getPackageName(), productMappings);
 		} catch (final RemoteException e) {
 			Log.e(TAG, "error while mapping product skus", e);
 		}
@@ -113,7 +114,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.launchPurchase");
 
 		try {
-			final Bundle buyIntentBundle = mService.getBuyIntent(3, getPackageName(), sku, itemType, extraData);
+			final Bundle buyIntentBundle = mService.getBuyIntent(API_VERSION, getPackageName(), sku, itemType, extraData);
 
 			final int response = buyIntentBundle.getInt("RESPONSE_CODE");
 
@@ -150,7 +151,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 			public void run() {
 				try {
 					mService.consumePurchase(
-						3, getPackageName(), String.format("inapp:%s:android.test.purchased", getPackageName())
+						API_VERSION, getPackageName(), String.format("inapp:%s:android.test.purchased", getPackageName())
 					);
 
 				} catch (final RemoteException e) {
@@ -171,7 +172,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 		final int result;
 		try {
-			result = mService.isBillingSupported(3, getPackageName(), "inapp");
+			result = mService.isBillingSupported(API_VERSION, getPackageName(), "inapp");
 
 		} catch (final RemoteException e) {
 			Log.e(TAG, "error while isBillingSupported", e);
@@ -208,7 +209,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 				final Bundle skuDetails;
 				try {
 
-					skuDetails = mService.getSkuDetails(3, getPackageName(), "inapp", querySkus);
+					skuDetails = mService.getSkuDetails(API_VERSION, getPackageName(), "inapp", querySkus);
 
 				} catch (final RemoteException e) {
 					Log.e(TAG, "query error", e);
