@@ -189,9 +189,41 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 			return;
 		}
 
+		getPurchases();
+
 		queryProductDetails();
 
 		buyButton.setEnabled(true);
+	}
+
+	private void getPurchases() {
+		Log.d(TAG, "PaymentOneAPKActivity.getPurchases");
+
+		Bundle ownedItems = null;
+
+		try {
+			ownedItems = mService.getPurchases(API_VERSION, getPackageName(), "inapp", null);
+		} catch (final RemoteException e) {
+			Log.e(TAG, "got an exception", e);
+
+			return;
+		}
+
+		final int response = ownedItems.getInt("RESPONSE_CODE");
+
+		if (response != PaymentOneAPKUtils.RESULT_OK) {
+
+			Log.e(TAG, String.format("response code = %d : %s", response, getErrorMessage(response)));
+
+			return;
+		}
+
+		final ArrayList<String> ownedSkus =
+		      ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+
+		for (final String ownedSku : ownedSkus) {
+			Log.d(TAG, "ownedSku = " + ownedSku);
+		}
 	}
 
 	private void queryProductDetails() {
