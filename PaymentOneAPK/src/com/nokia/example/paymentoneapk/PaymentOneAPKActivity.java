@@ -36,7 +36,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
-		Log.d(TAG, "com.nokia.IABinAll.MyActivity.onCreate");
+		Log.d(TAG, "PaymentOneAPKActivity.onCreate");
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
@@ -60,7 +60,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.onActivityResult");
+		Log.d(TAG, "PaymentOneAPKActivity.onActivityResult");
 
 		Log.d(TAG, String.format("requestCode = %d", requestCode));
 		Log.d(TAG, String.format("resultCode = %d", resultCode));
@@ -79,7 +79,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 	@Override
 	public void onServiceConnected(final ComponentName name, final IBinder service) {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneAPKActivity.onServiceConnected");
+		Log.d(TAG, "PaymentOneAPKActivity.onServiceConnected");
 
 		mService.setService(this, service);
 
@@ -111,7 +111,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	public void launchPurchase(final String sku, final String itemType, final int requestCode,
 		final String extraData) {
 
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.launchPurchase");
+		Log.d(TAG, "PaymentOneAPKActivity.launchPurchase");
 
 		try {
 			final Bundle buyIntentBundle = mService.getBuyIntent(API_VERSION, getPackageName(), sku, itemType, extraData);
@@ -144,7 +144,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	}
 
 	public void consumeTestProduct() {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.consumeProduct");
+		Log.d(TAG, "PaymentOneAPKActivity.consumeTestProduct");
 
 		new Thread(new Runnable() {
 			@Override
@@ -168,7 +168,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void checkIfBillingIsSupported() {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.checkIfBillingIsSupported");
+		Log.d(TAG, "PaymentOneAPKActivity.checkIfBillingIsSupported");
 
 		final int result;
 		try {
@@ -195,7 +195,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	}
 
 	private void queryProductDetails() {
-		Log.d(TAG, "com.nokia.example.paymentoneapk.PaymentOneActivity.queryProductDetails");
+		Log.d(TAG, "PaymentOneAPKActivity.queryProductDetails");
 
 		final Bundle querySkus = new Bundle();
 
