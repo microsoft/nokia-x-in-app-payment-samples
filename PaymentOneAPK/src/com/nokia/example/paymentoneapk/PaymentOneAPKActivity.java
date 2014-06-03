@@ -135,10 +135,10 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 
 		} catch (final RemoteException e) {
 			Log.e(TAG, "error while buying", e);
-			toastMessage("Got an exception while guying");
+			toastMessage("Got an exception while buying");
 		} catch (final IntentSender.SendIntentException e) {
 			Log.e(TAG, "error while buying", e);
-			toastMessage("Got an exception while guying");
+			toastMessage("Got an exception while buying");
 		}
 	}
 
