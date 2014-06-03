@@ -72,6 +72,10 @@ public class PaymentOneAPKService {
 
 	}
 
+	public boolean isSigningSupported() {
+		return useGoogleBilling; // Google supports signed packages, Nokia not
+	}
+
 	public void useGoogleIAB(final IInAppBillingService service) {
 		useGoogleBilling = true;
 
