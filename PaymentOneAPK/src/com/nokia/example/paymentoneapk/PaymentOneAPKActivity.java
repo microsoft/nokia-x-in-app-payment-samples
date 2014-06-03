@@ -199,31 +199,38 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	private void getPurchases() {
 		Log.d(TAG, "PaymentOneAPKActivity.getPurchases");
 
-		Bundle ownedItems = null;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Bundle ownedItems = null;
 
-		try {
-			ownedItems = mService.getPurchases(API_VERSION, getPackageName(), "inapp", null);
-		} catch (final RemoteException e) {
-			Log.e(TAG, "got an exception", e);
+				try {
+					ownedItems = mService.getPurchases(API_VERSION, getPackageName(), "inapp", null);
+				} catch (final RemoteException e) {
+					Log.e(TAG, "got an exception", e);
 
-			return;
-		}
+					return;
+				}
 
-		final int response = ownedItems.getInt("RESPONSE_CODE");
+				final int response = ownedItems.getInt("RESPONSE_CODE");
 
-		if (response != PaymentOneAPKUtils.RESULT_OK) {
+				Log.d(TAG, "getPurchases response code = " + response);
 
-			Log.e(TAG, String.format("response code = %d : %s", response, getErrorMessage(response)));
+				if (response != PaymentOneAPKUtils.RESULT_OK) {
 
-			return;
-		}
+					Log.e(TAG, String.format("response code = %d : %s", response, getErrorMessage(response)));
 
-		final ArrayList<String> ownedSkus =
-		      ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+					return;
+				}
 
-		for (final String ownedSku : ownedSkus) {
-			Log.d(TAG, "ownedSku = " + ownedSku);
-		}
+				final ArrayList<String> ownedSkus =
+				      ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+
+				for (final String ownedSku : ownedSkus) {
+					Log.d(TAG, "ownedSku = " + ownedSku);
+				}
+			}
+		}).start();
 	}
 
 	private void queryProductDetails() {
