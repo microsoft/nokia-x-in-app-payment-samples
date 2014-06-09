@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -26,7 +28,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	private static final String TAG = PaymentOneAPKActivity.class.getCanonicalName();
 
 	public static final int TOAST_DURATION = 1500;
-	public static final int API_VERSION = 3;
+	public static final int API_VERSION    = 3;
 
 	private final PaymentOneAPKService mService = new PaymentOneAPKService();
 
@@ -60,10 +62,13 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
+		String purchaseDataJson = data.getStringExtra("INAPP_PURCHASE_DATA");
+
 		Log.d(TAG, "PaymentOneAPKActivity.onActivityResult");
 
 		Log.d(TAG, String.format("requestCode = %d", requestCode));
 		Log.d(TAG, String.format("resultCode = %d", resultCode));
+		Log.d(TAG, "purchaseDataJson = " + purchaseDataJson);
 
 		if (resultCode == RESULT_OK) {
 			toastMessage("Item purchased");
@@ -71,7 +76,21 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 			toastMessage("Error while purchasing product");
 		}
 
-		consumeTestProduct();
+		String token = "";
+
+		try {
+
+			JSONObject purchaseData = new JSONObject(purchaseDataJson);
+			token = purchaseData.getString("purchaseToken");
+
+		} catch (JSONException e) {
+			Log.e(TAG, "error while parsing JSON", e);
+			toastMessage("Error while parsing JSON");
+
+			return;
+		}
+
+		consumeTestProduct(token);
 	}
 
 	@Override
@@ -147,20 +166,29 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 		}
 	}
 
-	public void consumeTestProduct() {
+	public void consumeTestProduct(final String token) {
 		Log.d(TAG, "PaymentOneAPKActivity.consumeTestProduct");
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				final int result;
+
 				try {
-					mService.consumePurchase(
-						API_VERSION, getPackageName(), String.format("inapp:%s:android.test.purchased", getPackageName())
-					);
+					result = mService.consumePurchase(API_VERSION, getPackageName(), token);
 
 				} catch (final RemoteException e) {
 					Log.e(TAG, "error while consuming", e);
 					toastMessage("Got an exception while consuming");
+					return;
+				}
+
+				if (result != PaymentOneAPKUtils.RESULT_OK) {
+
+					toastMessage(String.format("Was not able to consume product: %s", getErrorMessage(result)));
+
+					Log.e(TAG, String.format("result = %d : %s", result, getErrorMessage(result)));
+
 					return;
 				}
 
@@ -228,7 +256,7 @@ public class PaymentOneAPKActivity extends Activity implements ServiceConnection
 				}
 
 				final ArrayList<String> ownedSkus =
-				      ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+					ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
 
 				for (final String ownedSku : ownedSkus) {
 					Log.d(TAG, "ownedSku = " + ownedSku);
